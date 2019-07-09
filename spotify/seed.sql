@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS artist;
 
 CREATE TABLE artist(
-  id VARCHAR(255) PRIMARY KEY,
+  artist_id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255)
 );
 
@@ -13,26 +13,26 @@ CREATE TABLE artist(
 CREATE TABLE album(
   name VARCHAR(255),
   label VARCHAR(255),
-  id VARCHAR(255) PRIMARY KEY
+  album_id VARCHAR(255) PRIMARY KEY
 );
 
 CREATE TABLE track(
   name VARCHAR(255),
-  artist_id VARCHAR(255) REFERENCES artist(id),
-  album_id VARCHAR(255) REFERENCES album(id),
+  artist_id VARCHAR(255) REFERENCES artist(artist_id),
+  album_id VARCHAR(255) REFERENCES album(album_id),
   disc_number INTEGER,
   popularity INTEGER,
-  id VARCHAR(255) PRIMARY KEY
+  track_id VARCHAR(255) PRIMARY KEY
 );
 
 CREATE TABLE spotify_user(
-  id SERIAL PRIMARY KEY,
+  spotify_user_id SERIAL PRIMARY KEY,
   name VARCHAR(255)
 );
 
 CREATE TABLE likes(
-  user_id SERIAL REFERENCES spotify_user(id),
-  track_id VARCHAR(255) REFERENCES track(id),
+  user_id SERIAL REFERENCES spotify_user(spotify_user_id),
+  track_id VARCHAR(255) REFERENCES track(track_id),
   confirmed BOOLEAN DEFAULT FALSE
 );
 
