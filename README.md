@@ -2,23 +2,34 @@
 
 ## Learning Objectives
 
+- Discuss different types of table relationships.
 - Create tables with foreign key references.
-- Create join tables to represent many-to-many relationships.
-- Insert rows in join tables to create many-to-many relationships.
-- Select data about many-to-many relationships using join tables.
+- Discuss and create join tables.
+- Insert rows in join tables.
+- Select data using join tables.
 
 
 ## Introduction
 
-While it is conceivable to store all of the data that is needed for a particular domain model object or resource in a single table, there are numerous downsides to such an approach.  For example, in the cheesy sql exercise, if we wanted to update the name `America` or `Ireland` to `United States of America` or `Republic Of Ireland`, we would have to update every single row in the `cheese` table that referred to either of these places of origin.  Thus, `redundancy` of common data points can make altering or updating these fields difficult.  
+While it is conceivable to store all of the data that is needed for a particular domain model object or resource in a single table, there are numerous downsides to such an approach.  For example, in our `students database`, let's say we had a column called "teacher_name". If the students got a new teacher, we would have to update every single row in that column.   
 
-Further, there are weak guarantees for the consistency and correctness of hard-coded fields in a single column; what prevents a developer who is working on a different feature from using `french` rather than `France` when inserting new rows into the `cheese` table?  Leveraging table relations can improve `data integrity` and provide stronger guarantees regarding the consistency and correctness of what we store and retrieve from a database.
+Further, there are weak guarantees for the consistency and correctness of hard-coded fields in a single column. If we're hard-coding every row, what happens if your developer makes a few minor spelling mistakes or miscapitalizations? Suddenly the data would become incredibly difficult to search. 
 
+Leveraging table relations can improve `data integrity` and provide stronger guarantees regarding the consistency and correctness of what we store and retrieve from a database.
+
+<hr>
 
 One of the key features of relational databases is that they can represent
 relationships between rows in different tables.
 
-Consider spotify, we could start out with two tables, `artist` and `track`.
+We'll focus on two types of relationships: **one-to-many** and **many-to-many**. Let's think of some examples of each:
+- One to many
+- Many to many
+
+<hr>
+
+
+Let's use Spotify to imagine this in the real world. We could start out with two tables, `artist` and `track`.
 Our goal now is to somehow indicate the relationship between an artist and a track.
 In this case, that relationship indicates who performed the track.
 
@@ -27,17 +38,19 @@ You can imagine that we'd like to use this information in a number of ways, such
 - Getting all tracks performed by a given artist
 - Searching for tracks based on attributes of the artist (e.g., all tracks
   performed by artists at Interscope)
+  
+#### What kind of relationship do we see between artist and track?
 
 ## JOINS
 
 ### Building it from the ground up
-Let's build out our spotify database, starting with artist, album, and track.
+Let's build out our Spotify database, starting with artist, album, and track.
 Note how id's are PRIMARY KEYs, and relationships are established when these
 ids are referenced by other tables.
 
 ```sql
 CREATE TABLE artist(
-  id VARCHAR(255) PRIMARY KEY,
+  artist_id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255)
 );
 
@@ -45,7 +58,7 @@ CREATE TABLE artist(
 CREATE TABLE album(
   name VARCHAR(255),
   label VARCHAR(255),
-  id VARCHAR(255) PRIMARY KEY
+  album_id VARCHAR(255) PRIMARY KEY
 );
 
 CREATE TABLE track(
@@ -54,7 +67,7 @@ CREATE TABLE track(
   album_id VARCHAR(255),
   disc_number INTEGER,
   popularity INTEGER,
-  id VARCHAR(255) PRIMARY KEY
+  track_id VARCHAR(255) PRIMARY KEY
 );
 ```
 
@@ -62,13 +75,13 @@ Using simple `SELECT` statements, if we wanted to find all songs by `Beyonce` we
 
 ```sql
 spots=# SELECT * FROM artist WHERE name LIKE 'Beyonc%';
-           id           |  name
+           artist_id           |  name
 ------------------------+---------
  6vWDO969PvNqNYHIOW5v0m | Beyoncé
 (1 row)
 ```
 
-And then copy + paste the artist.id into a `SELECT` query `FROM` the `track` table:
+And then copy + paste the artist.artist_id into a `SELECT` query `FROM` the `track` table:
 
 ```sql
 spots=# SELECT name FROM track WHERE artist_id = '6vWDO969PvNqNYHIOW5v0m';
@@ -84,8 +97,8 @@ spots=# SELECT name FROM track WHERE artist_id = '6vWDO969PvNqNYHIOW5v0m';
 We can see that the tables we are `SELECT`ing `FROM` are the exact tables defined in the db schema.  As will be shown below, SQL does not confine the user to simply querying data from individual tables.  It is possible, at least from a user interface perspective, to stitch together two tables along a common column such that the table to be queried from looks more like the following:
 
 ```sql
-spots=# SELECT * FROM artist JOIN track ON track.artist_id = artist.id LIMIT 3;
-           id           |     name      |            name            |       artist_id        |        album_id        | disc_number | popularity |           id
+spots=# SELECT * FROM artist JOIN track ON track.artist_id = artist.artist_id LIMIT 3;
+           artist_id           |     name      |            name            |       artist_id        |        album_id        | disc_number | popularity |           id
 ------------------------+---------------+----------------------------+------------------------+------------------------+-------------+------------+------------------------
  3HCpwNmFp2rvjkdjTs4uxs | Kyuss         | Demon Cleaner              | 3HCpwNmFp2rvjkdjTs4uxs | 1npen0QK3TNxZd2hLNzzOj |           1 |         52 | 2cVphsi72OjF7s0rtt2z5e
  1hCkSJcXREhrodeIHQdav8 | Ramin Djawadi | This World                 | 1hCkSJcXREhrodeIHQdav8 | 2poAUFGkHetMzM4xzLBVhY |           1 |         52 | 41otw6RUcMhVgO1LDOLmFX
