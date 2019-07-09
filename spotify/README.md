@@ -1,13 +1,13 @@
 ## Further Lab
 
-- first clone this repo
-- Navigate to `spots`
--  `createdb musicdb`
-- `psql -d musicdb -f seed.sql`
+- first clone the entire sql-joins repository.
+- Navigate to `spotify`
+- In your terminal, create a new sql database with: `createdb musicdb`
+- Fill that database with data by entering the following command in the terminal: `psql -d musicdb -f seed.sql`
+- Take a look at the `seed.sql` file in this repository and observe the tables, column names, and their relationships.
+- Enter `psql` in the terminal so you can start interacting with this new database.
 
-Then do the following:
-
-- Identify all relations/constraints on the track table, are there any others?
+Using `SELECT` statements, do the following:
 - Find all songs released on albums from the `Interscope` label
 - Find all of Beyoncé's tracks
 - Find all of the disc numbers only for Beyonce's tracks
