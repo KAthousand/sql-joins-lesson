@@ -275,7 +275,7 @@ With `AS`:
 ```sql
 SELECT artists.name AS artist_name, tracks.name AS track_name
 FROM artists
-JOIN tracks ON artisst.id = track.artist_id
+JOIN tracks ON artist.id = track.artist_id
 WHERE artists.name LIKE 'Beyonc%';
 ```
 
