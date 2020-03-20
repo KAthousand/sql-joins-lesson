@@ -123,8 +123,11 @@ two or more tables, we have to tell the database how to match up the rows.
 
 This is done using the `ON` clause, which specifies which properties to match.
 
-```
-SELECT artists.name, tracks.name FROM artists JOIN tracks ON tracks.artist_id = artists.artist_id WHERE artists.name LIKE 'Beyon%';
+```sql
+SELECT artists.name, tracks.name FROM artists
+JOIN tracks ON tracks.artist_id = artists.id
+WHERE artists.name LIKE 'Beyon%';
+
   name   |                       name
 ---------+--------------------------------------------------
  Beyoncé | Video Phone - Extended Remix featuring Lady Gaga
