@@ -206,13 +206,13 @@ constraints.  In other words, the `referential integrity` of our data is maintai
 By using the `REFERENCES` keyword, foreign key constraints can be added to the schema.
 
 ```SQL
-CREATE TABLE track(
+CREATE TABLE tracks(
   name VARCHAR(255),
-  artist_id VARCHAR(255) REFERENCES artist(artist_id),
-  album_id VARCHAR(255) REFERENCES album(album_id),
+  artist_id VARCHAR(255) REFERENCES artists(id),
+  album_id VARCHAR(255) REFERENCES albums(id),
   disc_number INTEGER,
   popularity INTEGER,
-  track_id VARCHAR(255) PRIMARY KEY
+  id VARCHAR(255) PRIMARY KEY
 );
 ```
 
@@ -226,11 +226,11 @@ its relationships and constraints.
 `JOIN` statements can also be linked together to query data across several tables.
 
 ```sql
-SELECT album.name
-FROM album
-JOIN track ON track.album_id = album.album_id
-JOIN artist ON track.artist_id = artist.artist_id
-WHERE artist.name LIKE 'Beyonc%';
+SELECT albums.name
+FROM albums
+JOIN tracks ON tracks.album_id = albums.id
+JOIN artist ON tracks.artist_id = artists.id
+WHERE artists.name LIKE 'Beyonc%';
 
 name
 --------------------------------------
