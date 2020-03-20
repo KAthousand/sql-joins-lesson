@@ -29,7 +29,7 @@ We'll focus on two types of relationships: **one-to-many** and **many-to-many**.
 <hr>
 
 
-Let's use Spotify to imagine this in the real world. We could start out with two tables, `artist` and `track`.
+Let's use Spotify to imagine this in the real world. We could start out with two tables, `artists` and `tracks`.
 Our goal now is to somehow indicate the relationship between an artist and a track.
 In this case, that relationship indicates who performed the track.
 
@@ -49,42 +49,46 @@ Note how id's are PRIMARY KEYs, and relationships are established when these
 ids are referenced by other tables.
 
 ```sql
-CREATE TABLE artist(
-  artist_id VARCHAR(255) PRIMARY KEY,
+CREATE TABLE artists(
+  id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255)
 );
 
 
-CREATE TABLE album(
+CREATE TABLE albums(
   name VARCHAR(255),
   label VARCHAR(255),
-  album_id VARCHAR(255) PRIMARY KEY
+  id VARCHAR(255) PRIMARY KEY
 );
 
-CREATE TABLE track(
+CREATE TABLE tracks(
   name VARCHAR(255),
   artist_id VARCHAR(255),
   album_id VARCHAR(255),
   disc_number INTEGER,
   popularity INTEGER,
-  track_id VARCHAR(255) PRIMARY KEY
+  id VARCHAR(255) PRIMARY KEY
 );
 ```
 
 Using simple `SELECT` statements, if we wanted to find all songs by `Beyonce` we would have to execute to queries, e.g.:
 
 ```sql
-spots=# SELECT * FROM artist WHERE name LIKE 'Beyonc%';
-           artist_id           |  name
+SELECT * FROM artists
+WHERE name LIKE 'Beyonc%';
+
+           id           |  name
 ------------------------+---------
  6vWDO969PvNqNYHIOW5v0m | Beyoncé
 (1 row)
 ```
 
-And then copy + paste the artist.artist_id into a `SELECT` query `FROM` the `track` table:
+And then copy + paste the artist.id into a `SELECT` query `FROM` the `track` table:
 
 ```sql
-spots=# SELECT name FROM track WHERE artist_id = '6vWDO969PvNqNYHIOW5v0m';
+SELECT name FROM tracks
+WHERE artist_id = '6vWDO969PvNqNYHIOW5v0m';
+
                        name
 --------------------------------------------------
  Video Phone - Extended Remix featuring Lady Gaga
@@ -99,12 +103,15 @@ We can see that the tables we are `SELECT`ing `FROM` are the exact tables define
 It is possible, at least from a user interface perspective, to stitch together two tables along a common column such that the table to be queried from looks more like the following:
 
 ```sql
-spots=# SELECT * FROM artist JOIN track ON track.artist_id = artist.artist_id LIMIT 3;
-           artist_id           |     name      |            name            |       artist_id        |        album_id        | disc_number | popularity |           track_id
+SELECT * FROM artists
+JOIN tracks ON tracks.artist_id = artists.id
+LIMIT 3;
+
+           id           |     name      |            name            |       artist_id        |        album_id        | disc_number | popularity |           track_id
 ------------------------+---------------+----------------------------+------------------------+------------------------+-------------+------------+------------------------
  3HCpwNmFp2rvjkdjTs4uxs | Kyuss         | Demon Cleaner              | 3HCpwNmFp2rvjkdjTs4uxs | 1npen0QK3TNxZd2hLNzzOj |           1 |         52 | 2cVphsi72OjF7s0rtt2z5e
  1hCkSJcXREhrodeIHQdav8 | Ramin Djawadi | This World                 | 1hCkSJcXREhrodeIHQdav8 | 2poAUFGkHetMzM4xzLBVhY |           1 |         52 | 41otw6RUcMhVgO1LDOLmFX
- 2gCsNOpiBaMNh20jQ5prf0 | Buddy Guy     | Baby Please Dont Leave Me | 2gCsNOpiBaMNh20jQ5prf0 | 7bkjnyiMG8mXzmEyfY49wD |           1 |         45 | 7JECM65zNFrYIHdvxj8NbO
+ 2gCsNOpiBaMNh20jQ5prf0 | Buddy Guy     | Baby Please Dont Leave Me  | 2gCsNOpiBaMNh20jQ5prf0 | 7bkjnyiMG8mXzmEyfY49wD |           1 |         45 | 7JECM65zNFrYIHdvxj8NbO
 ```
 
 How is this possible?
@@ -117,7 +124,7 @@ two or more tables, we have to tell the database how to match up the rows.
 This is done using the `ON` clause, which specifies which properties to match.
 
 ```
-SELECT artist.name, track.name FROM artist JOIN track ON track.artist_id = artist.artist_id WHERE artist.name LIKE 'Beyon%';
+SELECT artists.name, tracks.name FROM artists JOIN tracks ON tracks.artist_id = artists.artist_id WHERE artists.name LIKE 'Beyon%';
   name   |                       name
 ---------+--------------------------------------------------
  Beyoncé | Video Phone - Extended Remix featuring Lady Gaga
@@ -137,52 +144,55 @@ Also, our select items can be more varied now and include either all or
 just some of the columns from the associated tables.
 
 ```sql
-spots=# SELECT * FROM artist JOIN track ON track.artist_id = artist.artist_id WHERE artist.name LIKE 'Beyon%';
+SELECT * FROM artists
+JOIN tracks ON tracks.artist_id = artists.id
+WHERE artists.name LIKE 'Beyonc%';
+
 -[ RECORD 1 ]-------------------------------------------------
-artist_id          | 6vWDO969PvNqNYHIOW5v0m
+id          | 6vWDO969PvNqNYHIOW5v0m
 name        | Beyoncé
 name        | Video Phone - Extended Remix featuring Lady Gaga
 artist_id   | 6vWDO969PvNqNYHIOW5v0m
 album_id    | 1wuC0jj7341uFOuCyqzwe8
 disc_number | 1
 popularity  | 53
-track_id          | 2nX9948PslVYrrHUf6w0eL
+id          | 2nX9948PslVYrrHUf6w0eL
 -[ RECORD 2 ]-------------------------------------------------
-artist_id          | 6vWDO969PvNqNYHIOW5v0m
+id          | 6vWDO969PvNqNYHIOW5v0m
 name        | Beyoncé
 name        | Crazy In Love
 artist_id   | 6vWDO969PvNqNYHIOW5v0m
 album_id    | 6oxVabMIqCMJRYN1GqR3Vf
 disc_number | 1
 popularity  | 80
-track_id          | 5IVuqXILoxVWvWEPm82Jxr
+id          | 5IVuqXILoxVWvWEPm82Jxr
 -[ RECORD 3 ]-------------------------------------------------
-artist_id          | 6vWDO969PvNqNYHIOW5v0m
+id          | 6vWDO969PvNqNYHIOW5v0m
 name        | Beyoncé
 name        | Drunk in Love
 artist_id   | 6vWDO969PvNqNYHIOW5v0m
 album_id    | 2UJwKSBUz6rtW4QLK74kQu
 disc_number | 1
 popularity  | 77
-track_id          | 6jG2YzhxptolDzLHTGLt7S
+id          | 6jG2YzhxptolDzLHTGLt7S
 -[ RECORD 4 ]-------------------------------------------------
-artist_id          | 6vWDO969PvNqNYHIOW5v0m
+id          | 6vWDO969PvNqNYHIOW5v0m
 name        | Beyoncé
 name        | ***Flawless
 artist_id   | 6vWDO969PvNqNYHIOW5v0m
 album_id    | 2UJwKSBUz6rtW4QLK74kQu
 disc_number | 1
 popularity  | 68
-track_id          | 7tefUew2RUuSAqHyegMoY1
+id          | 7tefUew2RUuSAqHyegMoY1
 -[ RECORD 5 ]-------------------------------------------------
-artist_id          | 6vWDO969PvNqNYHIOW5v0m
+id          | 6vWDO969PvNqNYHIOW5v0m
 name        | Beyoncé
 name        | Video Phone
 artist_id   | 6vWDO969PvNqNYHIOW5v0m
 album_id    | 23Y5wdyP5byMFktZf8AcWU
 disc_number | 2
 popularity  | 55
-track_id          | 53hNzjDClsnsdYpLIwqXvn
+id          | 53hNzjDClsnsdYpLIwqXvn
 ```
 
 ### What could go wrong?
@@ -208,20 +218,8 @@ CREATE TABLE track(
 
 After adding references, postgresql will now reject insert/update/delete queries that violate the consistency of the define relationships, viz., a track can't be added that has an invalid artist_id.
 
-
 Note: `\d+` and a table name displays a helpful view of the structure of a table along with
 its relationships and constraints.
-
-### Types of JOINS
-
-There are actually more than one type of `JOIN` statement.  See the following resource for a clean explanation:
-
-[Visual Joins](http://www.dofactory.com/sql/join)
-
-[More Visual Joins](http://www.sql-join.com/sql-join-types/)
-
-Which have we already seen?  The `JOIN` statement defaults to the inner join, since only records that have rows in both tables are displayed.
-
 
 ### Multi-Joins
 
@@ -232,7 +230,7 @@ SELECT album.name
 FROM album
 JOIN track ON track.album_id = album.album_id
 JOIN artist ON track.artist_id = artist.artist_id
-WHERE artist.name LIKE 'Beyon%';
+WHERE artist.name LIKE 'Beyonc%';
 
 name
 --------------------------------------
@@ -247,14 +245,14 @@ I AM...SASHA FIERCE
 You can make a table that is specifically and only used to join two other tables and create a many-to-many relationship. We call these "Join Tables". They typically consist of at minimum, two foreign keys and possibly other metadata. For example, if we added users and likes to our Spotify database, we don't need to know more about "likes" than its relationships to other tables:
 
 ```SQL
-CREATE TABLE spotify_user(
-  spotify_user_id SERIAL PRIMARY KEY,
+CREATE TABLE spotify_users(
+  id SERIAL PRIMARY KEY,
   name VARCHAR(255)
 );
 
 CREATE TABLE likes(
-  user_id SERIAL REFERENCES spotify_user(spotify_user_id),
-  track_id VARCHAR(255) REFERENCES track(track_id)
+  user_id SERIAL REFERENCES spotify_users(id),
+  track_id VARCHAR(255) REFERENCES tracks(id)
 );
 ```
 
@@ -266,19 +264,19 @@ by join clauses. Check the results of the following two select statements and no
 Without `AS`:
 
 ```sql
-SELECT artist.name, track.name
-FROM artist
-JOIN track ON artist.artist_id = track.artist_id
-WHERE artist.name LIKE 'Beyonc%';
+SELECT artists.name, tracks.name
+FROM artists
+JOIN tracks ON artists.id = tracks.artist_id
+WHERE artists.name LIKE 'Beyonc%';
 ```
 
 With `AS`:
 
 ```sql
-SELECT artist.name AS artist_name, track.name AS track_name
-FROM artist
-JOIN track ON artist.artist_id = track.artist_id
-WHERE artist.name LIKE 'Beyonc%';
+SELECT artists.name AS artist_name, tracks.name AS track_name
+FROM artists
+JOIN tracks ON artisst.id = track.artist_id
+WHERE artists.name LIKE 'Beyonc%';
 ```
 
 # Lab Join Queries

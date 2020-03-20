@@ -1,41 +1,41 @@
 DROP TABLE IF EXISTS likes;
-DROP TABLE IF EXISTS spotify_user;
-DROP TABLE IF EXISTS track;
-DROP TABLE IF EXISTS album;
-DROP TABLE IF EXISTS artist;
+DROP TABLE IF EXISTS spotify_users;
+DROP TABLE IF EXISTS tracks;
+DROP TABLE IF EXISTS albums;
+DROP TABLE IF EXISTS artists;
 
-CREATE TABLE artist(
-  artist_id VARCHAR(255) PRIMARY KEY,
+CREATE TABLE artists(
+  id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255)
 );
 
 
-CREATE TABLE album(
+CREATE TABLE albums(
   name VARCHAR(255),
   label VARCHAR(255),
-  album_id VARCHAR(255) PRIMARY KEY
+  id VARCHAR(255) PRIMARY KEY
 );
 
-CREATE TABLE track(
+CREATE TABLE tracks(
   name VARCHAR(255),
-  artist_id VARCHAR(255) REFERENCES artist(artist_id),
-  album_id VARCHAR(255) REFERENCES album(album_id),
+  artist_id VARCHAR(255) REFERENCES artists(id),
+  album_id VARCHAR(255) REFERENCES albums(id),
   disc_number INTEGER,
   popularity INTEGER,
-  track_id VARCHAR(255) PRIMARY KEY
+  id VARCHAR(255) PRIMARY KEY
 );
 
-CREATE TABLE spotify_user(
-  spotify_user_id SERIAL PRIMARY KEY,
+CREATE TABLE spotify_users(
+  id SERIAL PRIMARY KEY,
   name VARCHAR(255)
 );
 
 CREATE TABLE likes(
-  user_id SERIAL REFERENCES spotify_user(spotify_user_id),
-  track_id VARCHAR(255) REFERENCES track(track_id),
+  user_id SERIAL REFERENCES spotify_users(id),
+  tracks_id VARCHAR(255) REFERENCES tracks(id),
   confirmed BOOLEAN DEFAULT FALSE
 );
 
-\copy artist FROM './data/artist.csv' WITH (FORMAT csv); 
-\copy album FROM './data/album.csv' WITH (FORMAT csv); 
-\copy track FROM './data/track.csv' WITH (FORMAT csv); 
+\copy artists FROM './data/artist.csv' WITH (FORMAT csv); 
+\copy albums FROM './data/album.csv' WITH (FORMAT csv); 
+\copy tracks FROM './data/track.csv' WITH (FORMAT csv);

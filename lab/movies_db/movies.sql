@@ -1,8 +1,8 @@
 CREATE TABLE movies (
-  movie_id serial PRIMARY KEY,
+  id serial PRIMARY KEY,
   title varchar(255) NOT NULL,
   synopsis text,
-  director_id integer REFERENCES directors
+  director_id integer REFERENCES directors(id)
 );
 
 INSERT INTO movies (title, synopsis, director_id) VALUES

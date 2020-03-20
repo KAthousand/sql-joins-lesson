@@ -54,4 +54,4 @@ As you can see, my `queries.sql` file probably had something like `SELECT * FROM
 
 ### Deliverables
 
-- A completed `queries.sql` that has SQL queries that accomplish the above four requests.
+- A completed `queries.sql` that has SQL queries that accomplish the above five requests.
