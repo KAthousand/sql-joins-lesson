@@ -45,6 +45,22 @@ You can imagine that we'd like to use this information in a number of ways, such
 
 ## JOINS
 
+### First Step:
+
+First thing we need is a database to work in. We can do this with in PSQL like this:
+
+```sql
+CREATE DATABASE spotify_db;
+```
+
+-or-
+
+There is a shorthand command that we can do outside of `psql` directly in our bash command line:
+
+```bash
+createdb spotify_db
+```
+
 ### Building it from the ground up
 Let's build out our Spotify database, starting with artist, album, and track.
 Note how id's are PRIMARY KEYs, and relationships are established when these
@@ -72,6 +88,8 @@ CREATE TABLE tracks(
   id VARCHAR(255) PRIMARY KEY
 );
 ```
+
+> We have setup some data for our new tables. You can run this file the bash commands `psql -d spotify_db -f ./spotify/seed.sql`
 
 Using simple `SELECT` statements, if we wanted to find all songs by `Beyonce` we would have to execute to queries, e.g.:
 
@@ -109,12 +127,14 @@ SELECT * FROM artists
 JOIN tracks ON tracks.artist_id = artists.id
 LIMIT 3;
 
-           id           |     name      |            name            |       artist_id        |        album_id        | disc_number | popularity |           track_id
+           id           |     name      |            name            |       artist_id        |        album_id        | disc_number | popularity |           id
 ------------------------+---------------+----------------------------+------------------------+------------------------+-------------+------------+------------------------
  3HCpwNmFp2rvjkdjTs4uxs | Kyuss         | Demon Cleaner              | 3HCpwNmFp2rvjkdjTs4uxs | 1npen0QK3TNxZd2hLNzzOj |           1 |         52 | 2cVphsi72OjF7s0rtt2z5e
  1hCkSJcXREhrodeIHQdav8 | Ramin Djawadi | This World                 | 1hCkSJcXREhrodeIHQdav8 | 2poAUFGkHetMzM4xzLBVhY |           1 |         52 | 41otw6RUcMhVgO1LDOLmFX
  2gCsNOpiBaMNh20jQ5prf0 | Buddy Guy     | Baby Please Dont Leave Me  | 2gCsNOpiBaMNh20jQ5prf0 | 7bkjnyiMG8mXzmEyfY49wD |           1 |         45 | 7JECM65zNFrYIHdvxj8NbO
 ```
+
+> hint: If the formatting in your terminal is wonky, you can try `\x` to turn on or off "expanded display"
 
 How is this possible?
 
@@ -128,7 +148,7 @@ This is done using the `ON` clause, which specifies which properties to match.
 ```sql
 SELECT artists.name, tracks.name FROM artists
 JOIN tracks ON tracks.artist_id = artists.id
-WHERE artists.name LIKE 'Beyon%';
+WHERE artists.name LIKE 'Beyonc%';
 
   name   |                       name
 ---------+--------------------------------------------------
@@ -199,6 +219,10 @@ disc_number | 2
 popularity  | 55
 id          | 53hNzjDClsnsdYpLIwqXvn
 ```
+
+### We Do:
+
+Let's write out a SQL query that will return the names of the top 10 tracks and their artist's name.
 
 ### What could go wrong?
 There are no explicit checks to ensure that we're actually obeying these references. If a developer accidentally typed an invalid id number while inserting data, they wouldn't even realize a mistake was made.
@@ -280,12 +304,13 @@ With `AS`:
 ```sql
 SELECT artists.name AS artist_name, tracks.name AS track_name
 FROM artists
-JOIN tracks ON artist.id = track.artist_id
+JOIN tracks ON artists.id = tracks.artist_id
 WHERE artists.name LIKE 'Beyonc%';
 ```
 
-# Lab Join Queries
-- Navigate to `lab` in this repo and follow the directions in the `README`
+### We Do:
+
+Let's try to get the artist's name, track's name, album's name and label for everything under the label "Rhino/Elektra". We should also alias the columns to make the response more clear.
 
 # Further Practice
 >Side Note: Having trouble with `null` values? Try [psql coalesce](http://www.postgresqltutorial.com/postgresql-coalesce/)
