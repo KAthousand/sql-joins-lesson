@@ -258,7 +258,7 @@ its relationships and constraints.
 SELECT albums.name
 FROM albums
 JOIN tracks ON tracks.album_id = albums.id
-JOIN artist ON tracks.artist_id = artists.id
+JOIN artists ON tracks.artist_id = artists.id
 WHERE artists.name LIKE 'Beyonc%';
 
 name
