@@ -2,6 +2,8 @@
 
 # Relationships in SQL / SQL JOINs
 
+![](./images/xkcd.png)
+
 ## Learning Objectives
 
 - Discuss different types of table relationships.
@@ -13,7 +15,7 @@
 
 ## Introduction
 
-While it is conceivable to store all of the data that is needed for a particular domain model object or resource in a single table, there are numerous downsides to such an approach.  For example, in our `students database`, let's say we had a column called "teacher_name". If the students got a new teacher, we would have to update every single row in that column.   
+While it is conceivable to store all of the data that is needed for a particular domain model object or resource in a single table, there are numerous downsides to such an approach.  For example, in a `students database`, let's say we had a column called "teacher_name". If the students got a new teacher, we would have to update every single row in that column.   
 
 Further, there are weak guarantees for the consistency and correctness of hard-coded fields in a single column. If we're hard-coding every row, what happens if your developer makes a few minor spelling mistakes or miscapitalizations? Suddenly the data would become incredibly difficult to search. 
 
@@ -103,7 +105,7 @@ WHERE name LIKE 'Beyonc%';
 (1 row)
 ```
 
-And then copy + paste the artist.id into a `SELECT` query `FROM` the `track` table:
+And then copy + paste the artists.id into a `SELECT` query `FROM` the `track` table:
 
 ```sql
 SELECT name FROM tracks
